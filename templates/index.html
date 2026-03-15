@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PitchPoint</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 18px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            padding: 10px 14px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #efefef;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <h1>PitchPoint Match Database</h1>
+    <p>Click the button to fetch matches from the API and save/update them in MySQL.</p>
+
+    <form action="/sync" method="POST">
+        <button type="submit">Sync Matches</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Game ID</th>
+                <th>Competition</th>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Match Time</th>
+                <th>Status</th>
+                <th>Home Score</th>
+                <th>Away Score</th>
+                <th>Winner</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td>{{ game.game_id }}</td>
+                <td>{{ game.competition_name }} ({{ game.competition_code }})</td>
+                <td>{{ game.home_team }}</td>
+                <td>{{ game.away_team }}</td>
+                <td>{{ game.match_datetime }}</td>
+                <td>{{ game.status }}</td>
+                <td>{{ game.home_score if game.home_score is not none else '-' }}</td>
+                <td>{{ game.away_score if game.away_score is not none else '-' }}</td>
+                <td>{{ game.winner if game.winner else '-' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="9">No games stored yet. Press Sync Matches.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
